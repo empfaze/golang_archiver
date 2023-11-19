@@ -1,4 +1,4 @@
-package lib
+package vlc
 
 import (
 	"reflect"
@@ -64,7 +64,9 @@ func Test_Encode(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Encode(tt.str); !reflect.DeepEqual(tt.want, got) {
+			encoder := New()
+
+			if got := encoder.Encode(tt.str); !reflect.DeepEqual(tt.want, got) {
 				t.Errorf("Encode() = %v, want %v", got, tt.want)
 			}
 		})
@@ -85,7 +87,9 @@ func Test_Decode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Decode(tt.encodedData); !reflect.DeepEqual(got, tt.want) {
+			decoder := New()
+
+			if got := decoder.Decode(tt.encodedData); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Decode() = %v, want %v", got, tt.want)
 			}
 		})

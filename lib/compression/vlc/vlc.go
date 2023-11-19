@@ -1,16 +1,30 @@
-package lib
+package vlc
 
 import (
 	"strings"
 	"unicode"
 )
 
-func Encode(str string) []byte {
+type EncoderDecoder struct{}
+
+func New() EncoderDecoder {
+	return EncoderDecoder{}
+}
+
+func (_ EncoderDecoder) Encode(str string) []byte {
 	preparedText := getPreparedText(str)
 	binaryString := getEncodedBinary(preparedText)
 	splittedByChunksString := getSplittedByChunksString(binaryString, CHUNK_SIZE)
 
 	return splittedByChunksString.ToBytes()
+}
+
+func (_ EncoderDecoder) Decode(encodedData []byte) string {
+	binaryChunks := NewBinaryChunks(encodedData)
+	binaryString := binaryChunks.Join()
+	decodingTree := getEncodingTable().GetDecodingTree()
+
+	return getExportedText(decodingTree.Decode(binaryString))
 }
 
 func getPreparedText(str string) string {
@@ -80,14 +94,6 @@ func getEncodingTable() encodingTable {
 		'x': "00000000001",
 		'z': "000000000000",
 	}
-}
-
-func Decode(encodedData []byte) string {
-	binaryChunks := NewBinaryChunks(encodedData)
-	binaryString := binaryChunks.Join()
-	decodingTree := getEncodingTable().GetDecodingTree()
-
-	return getExportedText(decodingTree.Decode(binaryString))
 }
 
 func getExportedText(str string) string {
