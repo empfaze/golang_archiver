@@ -5,13 +5,12 @@ import (
 	"unicode"
 )
 
-func Encode(str string) string {
+func Encode(str string) []byte {
 	preparedText := getPreparedText(str)
 	binaryString := getEncodedBinary(preparedText)
 	splittedByChunksString := getSplittedByChunksString(binaryString, CHUNK_SIZE)
-	hexChunks := splittedByChunksString.ToHex()
 
-	return hexChunks.ToString()
+	return splittedByChunksString.ToBytes()
 }
 
 func getPreparedText(str string) string {
@@ -44,7 +43,7 @@ func getBinaryNumber(char rune) string {
 
 	result, ok := table[char]
 	if !ok {
-		panic("unknown character: " + string(char))
+		panic("Unknown character: " + string(char))
 	}
 
 	return result
@@ -83,9 +82,8 @@ func getEncodingTable() encodingTable {
 	}
 }
 
-func Decode(encodedText string) string {
-	hexChunks := GetHexChunks(encodedText)
-	binaryChunks := hexChunks.ToBinary()
+func Decode(encodedData []byte) string {
+	binaryChunks := NewBinaryChunks(encodedData)
 	binaryString := binaryChunks.Join()
 	decodingTree := getEncodingTable().GetDecodingTree()
 
